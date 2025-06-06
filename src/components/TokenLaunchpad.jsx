@@ -1,5 +1,11 @@
-import { useState } from "react";
-import { Keypair, SystemProgram, Transaction } from "@solana/web3.js";
+import { useEffect, useState } from "react";
+import {
+  Keypair,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+} from "@solana/web3.js";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import {
   TOKEN_2022_PROGRAM_ID,
@@ -11,29 +17,64 @@ import {
   TYPE_SIZE,
   LENGTH_SIZE,
   ExtensionType,
-  mintTo,
-  getOrCreateAssociatedTokenAccount,
   getAssociatedTokenAddressSync,
 } from "@solana/spl-token";
+// import { createCreateMetadataAccountV3Instruction } from "@metaplex-foundation/mpl-token-metadata";
+// import {
+//   findMetadataPda,
+//   DataV2,
+// } from "@metaplex-foundation/mpl-token-metadata";
 import { createInitializeInstruction, pack } from "@solana/spl-token-metadata";
 import { toast } from "sonner";
+import { sendMetadata } from "../lib/sendMetadata";
 
 export function TokenLaunchpad() {
   const [tokenInfo, setTokenInfo] = useState({
     name: "",
     symbol: "",
-    // image: "",
+    image: "",
+    description: "",
+    decimals: null,
   });
   const wallet = useWallet();
   const { connection } = useConnection();
+  const [balance, setBalance] = useState(null);
 
   async function createMint() {
+    const metaDataUrl = await sendMetadata(tokenInfo);
+
+    //     const [metadataPDA] = PublicKey.findProgramAddressSync(
+    //   [
+    //     Buffer.from("metadata"),
+    //     METAPLEX_PROGRAM_ID.toBuffer(),
+    //     mint.toBuffer(),
+    //   ],
+    //   METAPLEX_PROGRAM_ID
+    // );
+
+    //   const instruction = createCreateMetadataAccountV3Instruction(
+    //   {
+    //     metadata: metadataPDA,
+    //     mint,
+    //     mintAuthority: wallet.publicKey,
+    //     payer: wallet.publicKey,
+    //     updateAuthority: wallet.publicKey,
+    //   },
+    //   {
+    //     createMetadataAccountArgsV3: {
+    //       data: metadataData,
+    //       isMutable: true,
+    //       collectionDetails: null,
+    //     },
+    //   }
+    // );
+
     const mintKeypair = Keypair.generate();
     const metadata = {
       mint: mintKeypair.publicKey,
       name: tokenInfo.name,
       symbol: tokenInfo.symbol,
-      uri: "https://cdn.100xdevs.com/metadata.json",
+      uri: metaDataUrl,
       additionalMetadata: [],
     };
 
@@ -60,9 +101,9 @@ export function TokenLaunchpad() {
       ),
       createInitializeMintInstruction(
         mintKeypair.publicKey,
-        9,
+        tokenInfo.decimals,
         wallet.publicKey,
-        null,
+        wallet.publicKey,
         TOKEN_2022_PROGRAM_ID
       ),
       createInitializeInstruction({
@@ -141,48 +182,132 @@ export function TokenLaunchpad() {
     }
   }
 
-  return (
-    <div className="h-screen w-screen flex flex-col justify-center items-center bg-gray-100 px-4">
-      <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
-        Solana Token Launchpad
-      </h1>
+  useEffect(() => {
+    const fetchBalance = async () => {
+      if (!wallet.publicKey) return; // 👈 important check to avoid errors
 
-      <input
-        type="text"
-        placeholder="Name"
-        className="w-full max-w-sm mb-3 px-4 py-2 border border-gray-300 rounded text-black"
-        value={tokenInfo.name}
-        onChange={(e) => setTokenInfo({ ...tokenInfo, name: e.target.value })}
-      />
-      <input
-        type="text"
-        placeholder="Symbol"
-        className="w-full max-w-sm mb-3 px-4 py-2 border border-gray-300 rounded text-black"
-        value={tokenInfo.symbol}
-        onChange={(e) => setTokenInfo({ ...tokenInfo, symbol: e.target.value })}
-      />
-      {/* <input
-        type="text"
-        placeholder="Image URL"
-        className="w-full max-w-sm mb-3 px-4 py-2 border border-gray-300 rounded text-black"
-        value={tokenInfo.image}
-        onChange={(e) => setTokenInfo({ ...tokenInfo, image: e.target.value })}
-      />
-      <input
-        type="number"
-        min="0"
-        placeholder="Initial Supply"
-        className="w-full max-w-sm mb-5 px-4 py-2 border border-gray-300 rounded text-black"
-        value={tokenInfo.supply}
-        onChange={(e) => setTokenInfo({ ...tokenInfo, supply: e.target.value })}
-      /> */}
+      try {
+        const lamports = await connection.getBalance(wallet.publicKey);
+        const sol = lamports / LAMPORTS_PER_SOL;
+        setBalance(sol);
+      } catch (error) {
+        console.error("Failed to fetch balance:", error);
+      }
+    };
 
-      <button
-        onClick={createMint}
-        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded shadow-md transition"
-      >
-        Create Token
-      </button>
+    fetchBalance();
+  }, [connection, wallet.publicKey]);
+
+  return wallet.connected ? (
+    <div className="flex items-center justify-center min-h-screen bg-[#0e1728] w-screen">
+      <div className="w-full max-w-4xl bg-[#1e2836] rounded-lg shadow-lg p-6 space-y-6 py-10 px-5 m-10">
+        <div className="flex justify-between bg-[#364151] text-gray-300 p-4 rounded">
+          <p>
+            <span className="font-semibold text-white">Creation Fee</span>
+            <br />
+            <p className="text-sm">
+              Creation fee varies based on network conditions
+            </p>
+          </p>
+          <p className="text-right">
+            <span className="text-sm text-white font-semibold">
+              Your Balance
+            </span>
+            <br />
+            <p className="text-sm">
+              {balance !== null ? `${balance.toFixed(4)} SOL` : "Loading..."}
+            </p>
+          </p>
+        </div>
+
+        <div>
+          <p className="text-sm font-semibold text-white mb-1">Token Name</p>
+          <input
+            type="text"
+            placeholder="Enter token name"
+            className="w-full px-4 py-2 rounded bg-[#364151] text-gray-300 placeholder-gray-500 outline-none border border-gray-500"
+            value={tokenInfo.name}
+            onChange={(e) =>
+              setTokenInfo({ ...tokenInfo, name: e.target.value })
+            }
+          />
+        </div>
+
+        <div>
+          <p className="text-sm font-semibold text-white mb-1">Token Symbol</p>
+          <input
+            type="text"
+            placeholder="Enter token symbol"
+            className="w-full px-4 py-2 rounded bg-[#364151] text-gray-300 placeholder-gray-500 outline-none border border-gray-500"
+            value={tokenInfo.symbol}
+            onChange={(e) =>
+              setTokenInfo({ ...tokenInfo, symbol: e.target.value })
+            }
+          />
+        </div>
+
+        <div>
+          <p className="text-sm font-semibold text-white mb-1">Description</p>
+          <textarea
+            rows="3"
+            placeholder="Enter token description"
+            className="w-full px-4 py-2 rounded bg-[#364151] text-gray-300 placeholder-gray-500 outline-none resize-none border border-gray-500"
+            value={tokenInfo.description}
+            onChange={(e) =>
+              setTokenInfo({ ...tokenInfo, description: e.target.value })
+            }
+          />
+        </div>
+
+        <div>
+          <p className="text-sm font-semibold text-white mb-1">Decimals</p>
+          <input
+            type="number"
+            min={1}
+            placeholder="Enter token decimals"
+            className="w-full px-4 py-2 rounded bg-[#364151] text-gray-300 placeholder-gray-500 outline-none border border-gray-500"
+            value={tokenInfo.decimals}
+            onChange={(e) =>
+              setTokenInfo({ ...tokenInfo, decimals: e.target.value })
+            }
+          />
+        </div>
+
+        <div>
+          <p className="text-sm font-semibold text-white mb-1">Token Image</p>
+          <input
+            type="text"
+            placeholder="Enter image url"
+            className="w-full px-4 py-2 rounded bg-[#364151] text-gray-300 placeholder-gray-500 outline-none border border-gray-500"
+            value={tokenInfo.image}
+            onChange={(e) =>
+              setTokenInfo({ ...tokenInfo, image: e.target.value })
+            }
+          />
+        </div>
+
+        {/* <div>
+          <p className="text-sm font-semibold text-white mb-1">Token Image</p>
+          <button className="bg-[#2d3743] text-gray-300 px-4 py-2 rounded hover:bg-[#3a4c66]">
+            Upload Image
+          </button>
+        </div> */}
+
+        <button
+          onClick={createMint}
+          className="w-full bg-[#512da9] text-white font-semibold py-2 rounded hover:opacity-80 cursor-pointer"
+        >
+          Create Token
+        </button>
+      </div>
+    </div>
+  ) : (
+    <div className="flex items-center justify-center min-h-screen bg-[#0e1728] w-screen">
+      <div className="w-full max-w-4xl bg-[#1e2836] rounded-lg shadow-lg p-6">
+        <h1 className=" flex justify-center items-start text-md font-light text-yellow-500">
+          ⚠︎ Please connect your wallet to create a token
+        </h1>
+      </div>
     </div>
   );
 }
