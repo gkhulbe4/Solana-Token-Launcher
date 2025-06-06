@@ -26,7 +26,7 @@ function Header() {
                 }
                 to="/create-token"
               >
-                💎 Create Token
+                📝 Create Token
               </NavLink>
               <NavLink
                 className={({ isActive }) =>
@@ -57,7 +57,7 @@ function Header() {
               }
               to="/my-tokens"
             >
-              My Tokens
+              💎 My Tokens
             </NavLink>
           </div>
         </PopoverContent>
