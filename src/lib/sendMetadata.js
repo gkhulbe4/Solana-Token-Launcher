@@ -1,12 +1,12 @@
 /* eslint-disable no-undef */
 import { PinataSDK } from "pinata";
 
-export async function sendMetadata(tokenInfo) {
+export async function sendMetadata(tokenInfo, imageUrl) {
   const metadata = {
     name: tokenInfo.name,
     symbol: tokenInfo.symbol,
     description: tokenInfo.description,
-    image: tokenInfo.image,
+    image: imageUrl,
   };
 
   const pinata = new PinataSDK({

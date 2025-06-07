@@ -9,24 +9,17 @@ import {
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import {
   TOKEN_2022_PROGRAM_ID,
-  // createMintToInstruction,
-  createAssociatedTokenAccountInstruction,
   getMintLen,
   createInitializeMetadataPointerInstruction,
   createInitializeMintInstruction,
   TYPE_SIZE,
   LENGTH_SIZE,
   ExtensionType,
-  getAssociatedTokenAddressSync,
 } from "@solana/spl-token";
-// import { createCreateMetadataAccountV3Instruction } from "@metaplex-foundation/mpl-token-metadata";
-// import {
-//   findMetadataPda,
-//   DataV2,
-// } from "@metaplex-foundation/mpl-token-metadata";
 import { createInitializeInstruction, pack } from "@solana/spl-token-metadata";
 import { toast } from "sonner";
 import { sendMetadata } from "../lib/sendMetadata";
+import { createImageUrl } from "../lib/createImageUrl";
 
 export function TokenLaunchpad() {
   const [tokenInfo, setTokenInfo] = useState({
@@ -36,38 +29,27 @@ export function TokenLaunchpad() {
     description: "",
     decimals: null,
   });
+  const [img, setImg] = useState(null);
+  const [balance, setBalance] = useState(null);
+  const [creatingToken, setCreatingToken] = useState(false);
   const wallet = useWallet();
   const { connection } = useConnection();
-  const [balance, setBalance] = useState(null);
 
   async function createMint() {
-    const metaDataUrl = await sendMetadata(tokenInfo);
-
-    //     const [metadataPDA] = PublicKey.findProgramAddressSync(
-    //   [
-    //     Buffer.from("metadata"),
-    //     METAPLEX_PROGRAM_ID.toBuffer(),
-    //     mint.toBuffer(),
-    //   ],
-    //   METAPLEX_PROGRAM_ID
-    // );
-
-    //   const instruction = createCreateMetadataAccountV3Instruction(
-    //   {
-    //     metadata: metadataPDA,
-    //     mint,
-    //     mintAuthority: wallet.publicKey,
-    //     payer: wallet.publicKey,
-    //     updateAuthority: wallet.publicKey,
-    //   },
-    //   {
-    //     createMetadataAccountArgsV3: {
-    //       data: metadataData,
-    //       isMutable: true,
-    //       collectionDetails: null,
-    //     },
-    //   }
-    // );
+    setCreatingToken(true);
+    if (
+      tokenInfo.decimals === null ||
+      tokenInfo.name.length === 0 ||
+      tokenInfo.symbol.length === 0 ||
+      tokenInfo.description.length === 0 ||
+      img === null
+    ) {
+      toast.error("Please fill all required fields");
+      setCreatingToken(false);
+      return;
+    }
+    const imgUrl = await createImageUrl(img);
+    const metaDataUrl = await sendMetadata(tokenInfo, imgUrl);
 
     const mintKeypair = Keypair.generate();
     const metadata = {
@@ -130,55 +112,11 @@ export function TokenLaunchpad() {
         `Token mint created at ${mintKeypair.publicKey.toBase58()}`
       );
       console.log(`Token mint created at ${mintKeypair.publicKey.toBase58()}`);
+      setCreatingToken(false);
     } catch (error) {
       toast.error("Error minting token");
       console.log(error.message);
-    }
-
-    // ATA
-    const associatedToken = getAssociatedTokenAddressSync(
-      mintKeypair.publicKey,
-      wallet.publicKey,
-      false,
-      TOKEN_2022_PROGRAM_ID
-    );
-
-    console.log(associatedToken.toBase58());
-
-    const transaction2 = new Transaction().add(
-      createAssociatedTokenAccountInstruction(
-        wallet.publicKey,
-        associatedToken,
-        wallet.publicKey,
-        mintKeypair.publicKey,
-        TOKEN_2022_PROGRAM_ID
-      )
-    );
-
-    await wallet.sendTransaction(transaction2, connection);
-
-    // const transaction3 = new Transaction().add(
-    //   createMintToInstruction(
-    //     mintKeypair.publicKey,
-    //     associatedToken,
-    //     wallet.publicKey,
-    //     1000000000,
-    //     [],
-    //     TOKEN_2022_PROGRAM_ID
-    //   )
-    // );
-
-    try {
-      await wallet.sendTransaction(transaction2, connection);
-      toast.success(
-        `User Associated Token Account at ${associatedToken.toBase58()}`
-      );
-      console.log(
-        `User Associated Token Account at ${associatedToken.toBase58()}`
-      );
-    } catch (error) {
-      toast.error("Error minting token");
-      console.log(error.message);
+      setCreatingToken(false);
     }
   }
 
@@ -276,26 +214,32 @@ export function TokenLaunchpad() {
         <div>
           <p className="text-sm font-semibold text-white mb-1">Token Image</p>
           <input
-            type="text"
-            placeholder="Enter image url"
-            className="w-full px-4 py-2 rounded bg-[#364151] text-gray-300 placeholder-gray-500 outline-none border border-gray-500"
-            value={tokenInfo.image}
-            onChange={(e) =>
-              setTokenInfo({ ...tokenInfo, image: e.target.value })
-            }
+            type="file"
+            accept="image/*"
+            placeholder="Upload image"
+            className="w-max px-4 py-2 rounded bg-[#364151] text-gray-300 placeholder-gray-500 outline-none border border-gray-500"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              if (file) {
+                if (file) {
+                  if (file.size >= 100 * 1024) {
+                    toast.info("Image size must be less than 100 KB.");
+                    e.target.value = "";
+                    return;
+                  }
+                  setImg(file);
+                }
+              }
+            }}
           />
         </div>
 
-        {/* <div>
-          <p className="text-sm font-semibold text-white mb-1">Token Image</p>
-          <button className="bg-[#2d3743] text-gray-300 px-4 py-2 rounded hover:bg-[#3a4c66]">
-            Upload Image
-          </button>
-        </div> */}
-
         <button
+          disabled={creatingToken}
           onClick={createMint}
-          className="w-full bg-[#512da9] text-white font-semibold py-2 rounded hover:opacity-80 cursor-pointer"
+          className={`w-full bg-[#512da9] text-white font-semibold py-2 rounded hover:opacity-80 ${
+            creatingToken ? "opacity-80 cursor-not-allowed" : "cursor-pointer"
+          }`}
         >
           Create Token
         </button>
