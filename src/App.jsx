@@ -26,7 +26,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Hero />} />
               <Route path="/create-token" element={<TokenLaunchpad />} />
-              <Route path="/mint-token" element={<MintToken />} />
+              <Route path="/token-authority" element={<MintToken />} />
               <Route path="/send-token" element={<SendToken />} />
               <Route path="/my-tokens" element={<MyTokens />} />
             </Routes>

@@ -9,6 +9,7 @@ import {
   transfer,
 } from "@solana/spl-token";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { getAta } from "../lib/getAta";
 
 function SendToken() {
   const [transactionInfo, setTransactionInfo] = useState({
@@ -137,6 +138,19 @@ function SendToken() {
         className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded shadow-md transition"
       >
         Send Token
+      </button>
+
+      <button
+        className="w-full bg-[#512da9] text-white font-semibold py-2 rounded hover:opacity-80 cursor-pointer"
+        onClick={async () => {
+          const a = await getAta(
+            "5qrQYuT3UcC6wAEsTYSRzcqenw5skYNWpf9yXLfQ8ABF",
+            "3ushKNjuKhKUh5rKp8fNnJhD5zCHG513UwzzWg3Y2ugZ"
+          );
+          console.log(a.toBase58());
+        }}
+      >
+        get ata
       </button>
     </div>
   );

@@ -4,8 +4,8 @@ import {
 } from "@solana/spl-token";
 import { Connection, PublicKey } from "@solana/web3.js";
 export async function getAta(mintAddress, walletAddress) {
-  console.log(mintAddress);
-  console.log(walletAddress);
+  // console.log(mintAddress);
+  // console.log(walletAddress);
   const ata = await getAssociatedTokenAddress(
     new PublicKey(mintAddress),
     new PublicKey(walletAddress),

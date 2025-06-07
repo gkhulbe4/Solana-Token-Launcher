@@ -48,7 +48,7 @@ function MyTokens() {
   return (
     <div className="flex items-start justify-center min-h-screen bg-[#0e1728] w-screen">
       <div className="w-full max-w-4xl bg-[#1e2836] rounded-lg shadow-lg p-6 space-y-6 py-10 px-5 m-10">
-        <h1 className="text-lg font-bold text-white">Wallet Tokens</h1>
+        <h1 className="text-3xl font-bold text-white">Wallet Tokens</h1>
         {fetchingTokens ? (
           <div className="flex items-center justify-center">
             <Loader className="animate-spin" size={40} color="gray" />

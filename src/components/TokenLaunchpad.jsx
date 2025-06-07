@@ -9,7 +9,7 @@ import {
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import {
   TOKEN_2022_PROGRAM_ID,
-  createMintToInstruction,
+  // createMintToInstruction,
   createAssociatedTokenAccountInstruction,
   getMintLen,
   createInitializeMetadataPointerInstruction,
@@ -157,19 +157,19 @@ export function TokenLaunchpad() {
 
     await wallet.sendTransaction(transaction2, connection);
 
-    const transaction3 = new Transaction().add(
-      createMintToInstruction(
-        mintKeypair.publicKey,
-        associatedToken,
-        wallet.publicKey,
-        1000000000,
-        [],
-        TOKEN_2022_PROGRAM_ID
-      )
-    );
+    // const transaction3 = new Transaction().add(
+    //   createMintToInstruction(
+    //     mintKeypair.publicKey,
+    //     associatedToken,
+    //     wallet.publicKey,
+    //     1000000000,
+    //     [],
+    //     TOKEN_2022_PROGRAM_ID
+    //   )
+    // );
 
     try {
-      await wallet.sendTransaction(transaction3, connection);
+      await wallet.sendTransaction(transaction2, connection);
       toast.success(
         `User Associated Token Account at ${associatedToken.toBase58()}`
       );

@@ -13,7 +13,7 @@ import TokenAuthorityInfo from "./TokenAuthorityInfo";
 // import { token } from "@metaplex-foundation/js";
 import { Loader } from "lucide-react";
 import { getAta } from "../lib/getAta";
-// import { getMetadata } from "../lib/getMetdata";
+import FreezeAccount from "./FreezeAccount";
 
 function MintToken() {
   const [tokenMintInfo, setTokenMintInfo] = useState({
@@ -30,12 +30,14 @@ function MintToken() {
   });
 
   const [fetchingAuthorityInfo, setFetchingAuthorityInfo] = useState(false);
+  const [transacting, setTransacting] = useState(false);
 
   const wallet = useWallet();
   const { connection } = useConnection();
   // console.log(tokenMintInfo);
 
   async function MintTokenToATA() {
+    setTransacting(true);
     try {
       const mintData = await getMint(
         connection,
@@ -50,11 +52,13 @@ function MintToken() {
         !tokenMintInfo.mintAmount
       ) {
         toast.info("Please fill in all fields.");
+        setTransacting(false);
         return;
       }
 
       if (wallet.publicKey.toBase58() !== mintData.mintAuthority.toBase58()) {
         toast.error("You are not the mint authority");
+        setTransacting(false);
         return;
       }
 
@@ -63,7 +67,7 @@ function MintToken() {
         tokenMintInfo.recipientAddress
       );
       const ataAccount = await connection.getAccountInfo(ata);
-      console.log(ataAccount);
+      // console.log(ataAccount);
 
       if (ataAccount == null) {
         const transaction1 = new Transaction().add(
@@ -89,7 +93,9 @@ function MintToken() {
       );
       await wallet.sendTransaction(transaction2, connection);
       toast.success("Token minted to ATA: " + ata.toBase58());
+      setTransacting(false);
     } catch (error) {
+      setTransacting(false);
       toast.error(error.message);
       console.error(error);
     }
@@ -98,7 +104,9 @@ function MintToken() {
   return (
     <div className="flex items-start justify-center min-h-screen bg-[#0e1728] w-screen">
       <div className="w-full max-w-4xl bg-[#1e2836] rounded-lg shadow-lg p-6 space-y-6 py-10 px-5 m-10">
-        <h1 className="text-xl font-bold text-white">Mint Tokens</h1>
+        <h1 className="text-3xl font-bold text-white mb-8">
+          Token Authority Management
+        </h1>
         <div>
           <p className="text-sm font-semibold text-white mb-1">
             Token Mint Address
@@ -161,6 +169,7 @@ function MintToken() {
             )
           )}
         </div>
+        <h1 className="text-xl font-bold text-white">Mint Tokens</h1>
 
         <div>
           <p className="text-sm font-semibold text-white mb-1">
@@ -193,11 +202,20 @@ function MintToken() {
           />
         </div>
         <button
+          disabled={transacting}
           onClick={MintTokenToATA}
-          className="w-full bg-[#512da9] text-white font-semibold py-2 rounded hover:opacity-80 cursor-pointer"
+          className={`w-full bg-[#512da9] text-white font-semibold py-2 rounded hover:opacity-80 ${
+            transacting ? "opacity-80 cursor-not-allowed" : "cursor-pointer"
+          }`}
         >
           Mint Token
         </button>
+
+        <FreezeAccount
+          mintAddress={tokenMintInfo.tokenAddress}
+          transacting={transacting}
+          setTransacting={setTransacting}
+        />
       </div>
     </div>
   );
