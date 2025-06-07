@@ -14,11 +14,12 @@ import SendToken from "./components/SendToken";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import MyTokens from "./components/MyTokens";
+import TransactionHistory from "./components/TransactionHistory";
 
 function App() {
   return (
     <Router>
-      <ConnectionProvider endpoint={clusterApiUrl("devnet")}>
+      <ConnectionProvider endpoint={import.meta.env.VITE_SOLANA_DEVNET_RPC_URL}>
         <WalletProvider wallets={[]} autoConnect>
           <WalletModalProvider>
             <Toaster richColors />
@@ -29,6 +30,10 @@ function App() {
               <Route path="/token-authority" element={<MintToken />} />
               <Route path="/send-token" element={<SendToken />} />
               <Route path="/my-tokens" element={<MyTokens />} />
+              <Route
+                path="/transaction-history"
+                element={<TransactionHistory />}
+              />
             </Routes>
           </WalletModalProvider>
         </WalletProvider>

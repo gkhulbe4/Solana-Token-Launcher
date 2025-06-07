@@ -6,27 +6,27 @@ function Hero() {
     <section className="bg-[#0e1728] lg:grid lg:h-screen lg:place-content-center">
       <div className="mx-auto w-screen max-w-screen-xl px-4 py-16 sm:px-6 sm:py-24 md:grid md:grid-cols-2 md:items-center md:gap-4 lg:px-8 lg:py-32">
         <div className="max-w-prose text-left">
-          <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl">
-            Understand user flow and
-            <strong className="text-indigo-600"> increase </strong>
-            conversions
+          <h1 className="text-4xl font-bold text-white sm:text-5xl">
+            Launch your own token on&nbsp;
+            <strong className="text-indigo-600">Solana</strong>
+            &nbsp;effortlessly
           </h1>
 
-          <p className="mt-4 text-base text-pretty text-gray-700 sm:text-lg/relaxed">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eaque,
-            nisi. Natus, provident accusamus impedit minima harum corporis
-            iusto.
+          <p className="mt-4 text-base text-pretty text-gray-400 sm:text-lg/relaxed">
+            Create, mint, and manage Solana tokens with ease. Whether you're
+            launching a community token or testing your project idea, our
+            platform handles the complexity so you can focus on innovation.
           </p>
 
           <div className="mt-4 flex gap-4 sm:mt-6">
             <NavLink
-              className="inline-block rounded bg-[#512da9] px-5 py-3 font-medium text-white shadow-sm transition-colors hover:bg-[#40355d]"
+              className="inline-block rounded bg-[#512da9] px-5 py-3 font-medium text-white shadow-sm transition-colors hover:bg-[#512da9]/80 focus-visible:outline-offset-2 focus-visible:outline-[#512da9]"
               to="/create-token"
             >
               Get Started
             </NavLink>
 
-            <a className="inline-block rounded border border-gray-200 px-5 py-3 font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-900">
+            <a className="inline-block rounded border border-gray-200 px-5 py-3 font-medium text-gray-400 shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-900 cursor-pointer">
               Learn More
             </a>
           </div>
@@ -35,7 +35,7 @@ function Hero() {
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1024 768"
-          className="mx-auto hidden max-w-md text-gray-900 md:block"
+          className="mx-auto hidden max-w-md text-white md:block"
         >
           <g fill="none" fillRule="evenodd">
             <g fill="#FF5678">
