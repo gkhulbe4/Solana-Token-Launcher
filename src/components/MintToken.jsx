@@ -208,7 +208,7 @@ function MintToken() {
             transacting ? "opacity-80 cursor-not-allowed" : "cursor-pointer"
           }`}
         >
-          Mint Token
+          {transacting ? "Minting Token..." : "Mint Token"}
         </button>
 
         <FreezeAccount

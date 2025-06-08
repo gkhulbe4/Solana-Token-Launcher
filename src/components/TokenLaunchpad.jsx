@@ -15,11 +15,13 @@ import {
   TYPE_SIZE,
   LENGTH_SIZE,
   ExtensionType,
+  createAssociatedTokenAccountInstruction,
 } from "@solana/spl-token";
 import { createInitializeInstruction, pack } from "@solana/spl-token-metadata";
 import { toast } from "sonner";
 import { sendMetadata } from "../lib/sendMetadata";
 import { createImageUrl } from "../lib/createImageUrl";
+import { getAta } from "../lib/getAta";
 
 export function TokenLaunchpad() {
   const [tokenInfo, setTokenInfo] = useState({
@@ -67,7 +69,7 @@ export function TokenLaunchpad() {
       mintLen + metadataLen
     );
 
-    const transaction = new Transaction().add(
+    const tx1 = new Transaction().add(
       SystemProgram.createAccount({
         fromPubkey: wallet.publicKey,
         newAccountPubkey: mintKeypair.publicKey,
@@ -100,14 +102,12 @@ export function TokenLaunchpad() {
       })
     );
 
-    transaction.feePayer = wallet.publicKey;
-    transaction.recentBlockhash = (
-      await connection.getLatestBlockhash()
-    ).blockhash;
-    transaction.partialSign(mintKeypair);
+    tx1.feePayer = wallet.publicKey;
+    tx1.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+    tx1.partialSign(mintKeypair);
 
     try {
-      await wallet.sendTransaction(transaction, connection);
+      await wallet.sendTransaction(tx1, connection);
       toast.success(
         `Token mint created at ${mintKeypair.publicKey.toBase58()}`
       );
@@ -117,6 +117,29 @@ export function TokenLaunchpad() {
       toast.error("Error minting token");
       console.log(error.message);
       setCreatingToken(false);
+    }
+
+    // ATA Creation :-
+    const ata = await getAta(mintKeypair.publicKey, wallet.publicKey);
+    // console.log(associatedToken.toBase58());
+
+    const tx2 = new Transaction().add(
+      createAssociatedTokenAccountInstruction(
+        wallet.publicKey,
+        ata,
+        wallet.publicKey,
+        mintKeypair.publicKey,
+        TOKEN_2022_PROGRAM_ID
+      )
+    );
+
+    try {
+      await wallet.sendTransaction(tx2, connection);
+      toast.success(`User Associated Token Account at ${ata.toBase58()}`);
+      console.log(`User Associated Token Account at ${ata.toBase58()}`);
+    } catch (error) {
+      toast.error("Error minting token");
+      console.log(error.message);
     }
   }
 
@@ -241,7 +264,7 @@ export function TokenLaunchpad() {
             creatingToken ? "opacity-80 cursor-not-allowed" : "cursor-pointer"
           }`}
         >
-          Create Token
+          {creatingToken ? "Creating Token..." : "Create Token"}
         </button>
       </div>
     </div>
