@@ -10,10 +10,11 @@ import { toast } from "sonner";
 import { PublicKey, Transaction } from "@solana/web3.js";
 // import { set } from "@metaplex-foundation/umi/serializers";
 import TokenAuthorityInfo from "./TokenAuthorityInfo";
-// import { token } from "@metaplex-foundation/js";
+import { Separator } from "@/components/ui/separator";
 import { Loader } from "lucide-react";
 import { getAta } from "../lib/getAta";
 import FreezeAccount from "./FreezeAccount";
+import AllFreezeAccounts from "./AllFreezeAccounts";
 
 function MintToken() {
   const [tokenMintInfo, setTokenMintInfo] = useState({
@@ -107,7 +108,7 @@ function MintToken() {
         <h1 className="text-3xl font-bold text-white mb-8">
           Token Authority Management
         </h1>
-        <div>
+        <div className="mb-9">
           <p className="text-sm font-semibold text-white mb-1">
             Token Mint Address
           </p>
@@ -148,7 +149,7 @@ function MintToken() {
                 setFetchingAuthorityInfo(false);
                 // console.log(tokenAuthorityInfo);
               }}
-              className={`w-20 text-xs font-medium bg-[#512da9] text-white py-2 rounded hover:opacity-80 ${
+              className={`w-20 text-xs font-medium bg-[#512da9] text-white py-2 rounded hover:opacity-80 transition-all duration-300 ease-in-out ${
                 fetchingAuthorityInfo
                   ? "opacity-50 cursor-not-allowed"
                   : "opacity-100 cursor-pointer"
@@ -169,7 +170,8 @@ function MintToken() {
             )
           )}
         </div>
-        <h1 className="text-xl font-bold text-white">Mint Tokens</h1>
+        <Separator className="my-4 bg-gray-600" />
+        <h1 className="text-xl font-bold text-white mb-5 mt-8">Mint Tokens</h1>
 
         <div>
           <p className="text-sm font-semibold text-white mb-1">
@@ -204,18 +206,23 @@ function MintToken() {
         <button
           disabled={transacting}
           onClick={MintTokenToATA}
-          className={`w-full bg-[#512da9] text-white font-semibold py-2 rounded hover:opacity-80 ${
+          className={`w-full bg-[#512da9] text-white font-semibold py-2 rounded hover:opacity-80 cursor-pointer transition-all duration-300 ease-in-out${
             transacting ? "opacity-80 cursor-not-allowed" : "cursor-pointer"
           }`}
         >
           {transacting ? "Minting Token..." : "Mint Token"}
         </button>
 
+        <Separator className="my-4 bg-gray-600" />
+
         <FreezeAccount
           mintAddress={tokenMintInfo.tokenAddress}
           transacting={transacting}
           setTransacting={setTransacting}
         />
+
+        {/* <Separator className="my-4 bg-gray-600" />
+        <AllFreezeAccounts tokenAddress={tokenMintInfo.tokenAddress} /> */}
       </div>
     </div>
   );

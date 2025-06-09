@@ -15,11 +15,19 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import MyTokens from "./components/MyTokens";
 import TransactionHistory from "./components/TransactionHistory";
+import ManageAuthority from "./components/ManageAuthority";
+
+const endpoint = `https://solana-devnet.g.alchemy.com/v2/${
+  import.meta.env.VITE_ALCHEMY_API_KEY
+}`;
+const wsEndpoint = `wss://solana-devnet.g.alchemy.com/v2/${
+  import.meta.env.VITE_ALCHEMY_API_KEY
+}`;
 
 function App() {
   return (
     <Router>
-      <ConnectionProvider endpoint={import.meta.env.VITE_SOLANA_DEVNET_RPC_URL}>
+      <ConnectionProvider endpoint={endpoint} wsEndpoint={wsEndpoint}>
         <WalletProvider wallets={[]} autoConnect>
           <WalletModalProvider>
             <Toaster richColors />
@@ -28,6 +36,7 @@ function App() {
               <Route path="/" element={<Hero />} />
               <Route path="/create-token" element={<TokenLaunchpad />} />
               <Route path="/token-authority" element={<MintToken />} />
+              <Route path="/manage-authority" element={<ManageAuthority />} />
               <Route path="/send-token" element={<SendToken />} />
               <Route path="/my-tokens" element={<MyTokens />} />
               <Route

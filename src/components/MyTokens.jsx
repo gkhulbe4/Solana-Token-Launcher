@@ -54,7 +54,9 @@ function MyTokens() {
             <Loader className="animate-spin" size={40} color="gray" />
           </div>
         ) : myTokens.length === 0 ? (
-          <h1 className="text-2xl font-bold text-[#512da9]">No tokens found</h1>
+          <h1 className="text-center  font-normal text-gray-400">
+            No tokens found
+          </h1>
         ) : (
           <Token myTokens={myTokens} />
         )}

@@ -113,7 +113,7 @@ function FreezeAccount({ mintAddress, transacting, setTransacting }) {
 
   return (
     <div>
-      <p className="text-xl font-bold text-white mb-5">
+      <p className="text-xl font-bold text-white mb-5 mt-8">
         FreezeAccount/Thaw Account
       </p>
       <div>

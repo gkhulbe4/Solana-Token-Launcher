@@ -144,8 +144,8 @@ function SendToken() {
         className="w-full bg-[#512da9] text-white font-semibold py-2 rounded hover:opacity-80 cursor-pointer"
         onClick={async () => {
           const a = await getAta(
-            "5qrQYuT3UcC6wAEsTYSRzcqenw5skYNWpf9yXLfQ8ABF",
-            "3ushKNjuKhKUh5rKp8fNnJhD5zCHG513UwzzWg3Y2ugZ"
+            "9L6a3NuZTtiMR2Kij287PWaKbqbVAsyZk45CWs9NdyxY",
+            "3EjTrA5BUE5nKLSeRkcrMT66aY15LN2Nf2R5XKGNkpVN"
           );
           console.log(a.toBase58());
         }}

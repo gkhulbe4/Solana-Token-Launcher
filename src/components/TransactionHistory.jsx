@@ -84,7 +84,7 @@ function TransactionHistory() {
           )
         ) : (
           <p className="text-center text-gray-400 mt-4">
-            No more transactions to load.
+            No more transactions to load
           </p>
         )}
       </div>

@@ -22,6 +22,8 @@ import { toast } from "sonner";
 import { sendMetadata } from "../lib/sendMetadata";
 import { createImageUrl } from "../lib/createImageUrl";
 import { getAta } from "../lib/getAta";
+import { Loader } from "lucide-react";
+import LowBalanceCard from "./LowBalanceCard";
 
 export function TokenLaunchpad() {
   const [tokenInfo, setTokenInfo] = useState({
@@ -37,6 +39,8 @@ export function TokenLaunchpad() {
   const wallet = useWallet();
   const { connection } = useConnection();
 
+  // console.log(balance.toFixed(12));
+
   async function createMint() {
     setCreatingToken(true);
     if (
@@ -50,6 +54,7 @@ export function TokenLaunchpad() {
       setCreatingToken(false);
       return;
     }
+
     const imgUrl = await createImageUrl(img);
     const metaDataUrl = await sendMetadata(tokenInfo, imgUrl);
 
@@ -114,9 +119,10 @@ export function TokenLaunchpad() {
       console.log(`Token mint created at ${mintKeypair.publicKey.toBase58()}`);
       setCreatingToken(false);
     } catch (error) {
-      toast.error("Error minting token");
+      toast.error("Error creating token");
       console.log(error.message);
       setCreatingToken(false);
+      return;
     }
 
     // ATA Creation :-
@@ -140,6 +146,7 @@ export function TokenLaunchpad() {
     } catch (error) {
       toast.error("Error minting token");
       console.log(error.message);
+      return;
     }
   }
 
@@ -175,8 +182,23 @@ export function TokenLaunchpad() {
               Your Balance
             </span>
             <br />
-            <p className="text-sm">
-              {balance !== null ? `${balance.toFixed(4)} SOL` : "Loading..."}
+            <p
+              className={`text-sm ${
+                balance !== null && balance <= 0 && "text-red-500"
+              }`}
+            >
+              {balance !== null ? (
+                balance > 0 ? (
+                  `${balance.toFixed(4)} SOL`
+                ) : (
+                  <div className="flex gap-2 justify-center items-center">
+                    <LowBalanceCard />
+                    <p> {balance.toFixed(4)} SOL </p>
+                  </div>
+                )
+              ) : (
+                "Loading..."
+              )}
             </p>
           </p>
         </div>
@@ -260,7 +282,7 @@ export function TokenLaunchpad() {
         <button
           disabled={creatingToken}
           onClick={createMint}
-          className={`w-full bg-[#512da9] text-white font-semibold py-2 rounded hover:opacity-80 ${
+          className={`w-full bg-[#512da9] text-white font-semibold py-2 rounded hover:opacity-80 transition-all duration-300 ease-in-out ${
             creatingToken ? "opacity-80 cursor-not-allowed" : "cursor-pointer"
           }`}
         >
