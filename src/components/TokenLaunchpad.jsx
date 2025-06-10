@@ -55,6 +55,12 @@ export function TokenLaunchpad() {
       return;
     }
 
+    if (balance < 0.1) {
+      toast.error("Insufficient balance");
+      setCreatingToken(false);
+      return;
+    }
+
     const imgUrl = await createImageUrl(img);
     const metaDataUrl = await sendMetadata(tokenInfo, imgUrl);
 
@@ -288,6 +294,19 @@ export function TokenLaunchpad() {
         >
           {creatingToken ? "Creating Token..." : "Create Token"}
         </button>
+        <p className="text-md text-gray-300">
+          Note: Make sure your wallet is on the Devnet network.{" "}
+          {
+            <a
+              href="https://medium.com/future-vision/how-to-switch-to-solana-devnet-in-phantom-wallet-c1515625d78e"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-indigo-500 underline"
+            >
+              Here are the steps to connect your wallet to the Devnet
+            </a>
+          }
+        </p>
       </div>
     </div>
   ) : (

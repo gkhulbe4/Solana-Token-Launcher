@@ -47,7 +47,7 @@ function FreezeAccount({ mintAddress, transacting, setTransacting }) {
         createFreezeAccountInstruction(
           new PublicKey(tokenAta),
           new PublicKey(mintAddress),
-          mintData.freezeAuthority,
+          wallet.publicKey,
           undefined,
           TOKEN_2022_PROGRAM_ID
         )
@@ -59,7 +59,7 @@ function FreezeAccount({ mintAddress, transacting, setTransacting }) {
     } catch (error) {
       setTransacting(false);
       toast.error("Failed to freeze account");
-      console.log(error);
+      console.log(error.message);
     }
   }
 
@@ -82,7 +82,6 @@ function FreezeAccount({ mintAddress, transacting, setTransacting }) {
       undefined,
       TOKEN_2022_PROGRAM_ID
     );
-    // console.log(mintData.freezeAuthority.toBase58());
 
     if (wallet.publicKey.toBase58() !== mintData.freezeAuthority.toBase58()) {
       toast.error("You are not the freeze authority");
@@ -95,7 +94,7 @@ function FreezeAccount({ mintAddress, transacting, setTransacting }) {
         createThawAccountInstruction(
           new PublicKey(tokenAta),
           new PublicKey(mintAddress),
-          mintData.freezeAuthority,
+          wallet.publicKey,
           undefined,
           TOKEN_2022_PROGRAM_ID
         )

@@ -26,7 +26,7 @@ function Hero() {
               Get Started
             </NavLink>
 
-            <a className="inline-block rounded border border-gray-200 px-5 py-3 font-medium text-gray-400 shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-900 cursor-pointer">
+            <a className="inline-block rounded border border-gray-200 px-5 py-3 font-medium text-white shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-900 cursor-pointer">
               Learn More
             </a>
           </div>
