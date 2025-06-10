@@ -1,6 +1,6 @@
-# Solana Token Launcher
+# Solana Token Launcher (SolForge)
 
-Solana Token Launcher is a powerful, user-friendly decentralized application (dApp) built using React that enables users to effortlessly create, mint, and manage SPL tokens on the Solana blockchain. It supports real-time wallet integration, authority info fetching, ATA (Associated Token Account) management, and metadata deployment through IPFS via Pinata.
+SolForge is a powerful, user-friendly decentralized application (dApp) built using React that enables users to effortlessly create, mint, manage, and control SPL tokens on the Solana blockchain. It supports real-time wallet integration, authority info fetching, ATA (Associated Token Account) management, metadata deployment through IPFS via Pinata, and authority updates (mint/freeze).
 
 ---
 
@@ -37,6 +37,18 @@ Solana Token Launcher is a powerful, user-friendly decentralized application (dA
 - Uploads token images and metadata to IPFS using Pinata.
 - Generates metadata URIs compatible with the Solana token metadata standard.
 - Ensures decentralization and permanence of token info.
+
+### ✅ Manage Authorities
+
+- Manage and update Mint and Freeze authorities through the UI.
+- Transfer or revoke authorities securely using wallet signatures.
+- Helpful UI indicators for current authority status.
+
+### ✅ Transaction History
+
+- View recent transactions associated with the connected wallet.
+- Paginated fetch with "Load More" support.
+- Displays signature, block time, and Solana Explorer links.
 
 ---
 
@@ -76,6 +88,7 @@ Solana Token Launcher is a powerful, user-friendly decentralized application (dA
 - **Creation fees may vary** depending on Solana's network conditions and rent requirements.
 - Minting and ATA creation require the connected wallet to have the appropriate authorities.
 - All token interactions follow SPL token 2022 standards.
+- Your token will be created on the network specified by the RPC endpoint (e.g., devnet or mainnet).
 
 ---
 
@@ -103,6 +116,7 @@ VITE_PINATA_JWT=your_pinata_jwt_token_here
 VITE_PINATA_GATEWAY_URL=your_pinata_gateway_url
 VITE_PINATA_API_KEY=your_pinata_api_key
 VITE_PINATA_API_SECRET=your_pinata_api_secret
+VITE_ALCHEMY_API_KEY=your_alchemy_key_for_rpc
 ```
 
 ### 4. Start Development Server
@@ -116,6 +130,8 @@ npm run dev
 ## 🌟 Future Enhancements
 
 - Add transfer and burn token functionality
-- Display token balances and history
+- Display token balances and transaction history per token
 - Better error and edge case handling
 - Support for multiple wallet types
+- Advanced metadata customization
+- Add governance features (optional)
