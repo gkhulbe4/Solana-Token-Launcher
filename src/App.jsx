@@ -17,17 +17,20 @@ import MyTokens from "./components/MyTokens";
 import TransactionHistory from "./components/TransactionHistory";
 import ManageAuthority from "./components/ManageAuthority";
 
-const endpoint = `https://solana-devnet.g.alchemy.com/v2/${
-  import.meta.env.VITE_ALCHEMY_API_KEY
-}`;
-const wsEndpoint = `wss://solana-devnet.g.alchemy.com/v2/${
-  import.meta.env.VITE_ALCHEMY_API_KEY
-}`;
+// const endpoint = `https://solana-devnet.g.alchemy.com/v2/${
+//   import.meta.env.VITE_ALCHEMY_API_KEY
+// }`;
+// const wsEndpoint = `wss://solana-devnet.g.alchemy.com/v2/${
+//   import.meta.env.VITE_ALCHEMY_API_KEY
+// }`;
 
 function App() {
   return (
     <Router>
-      <ConnectionProvider endpoint={endpoint} wsEndpoint={wsEndpoint}>
+      <ConnectionProvider
+        endpoint={"https://api.devnet.solana.com"}
+        // wsEndpoint={wsEndpoint}
+      >
         <WalletProvider wallets={[]} autoConnect>
           <WalletModalProvider>
             <Toaster richColors />

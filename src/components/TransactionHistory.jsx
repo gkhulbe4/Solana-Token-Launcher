@@ -11,6 +11,7 @@ function TransactionHistory() {
   const [lastFetchedSig, setLastFetchedSig] = useState(null);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  // console.log(connection.rpcEndpoint);
 
   const fetchTransactions = async () => {
     if (!wallet.publicKey || loading || !hasMore) return;
@@ -29,7 +30,7 @@ function TransactionHistory() {
     const txs = await Promise.all(
       sigs.map(async (sig) => {
         const tx = await connection.getTransaction(sig.signature, {
-          commitment: "confirmed",
+          commitment: "finalized",
           maxSupportedTransactionVersion: 0,
         });
         return tx;
