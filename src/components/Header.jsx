@@ -42,7 +42,7 @@ function Header() {
       >
         <img
           className="h-full w-full"
-          src="https://ibb.co/mCDrtJqM"
+          src="https://res.cloudinary.com/dcnojmcog/image/upload/v1751223179/Screenshot_2025-06-08_at_11.27.32_PM-removebg-preview_jnxekb.png"
           alt="SolForge"
         />
       </NavLink>
