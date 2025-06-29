@@ -40,7 +40,11 @@ function Header() {
         to="/"
         className="h-full flex justify-center items-center font-bold text-lg font-mono border-r-1 border-gray-500 pr-5"
       >
-        <img className="h-full w-full" src="src/assets/logo.png" alt="" />
+        <img
+          className="h-full w-full"
+          src="https://ibb.co/mCDrtJqM"
+          alt="SolForge"
+        />
       </NavLink>
       {pathname != "/" && (
         <Popover>
